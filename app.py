@@ -2,8 +2,8 @@ from flask import Flask, request, redirect, url_for, render_template
 from dotenv import load_dotenv
 import telebot
 import os
-from app.models.user import UserModel
-from app.keyboards import *
+from app_folder.models.user import UserModel
+from app_folder.keyboards import *
 
 load_dotenv()
 
