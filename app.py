@@ -105,6 +105,12 @@ def process_get_new_name(message):
     else:
         get_info(message)
 
+@bot.message_handler(regexp="Back to main menu")
+def get_new_gender(message):
+    chat_id = message.chat.id
+    msg = bot.send_message(chat_id, 'Main menu',
+                           reply_markup=main_menu_keyboard())
+
 
 @bot.message_handler(regexp="Change gender")
 def get_new_gender(message):
