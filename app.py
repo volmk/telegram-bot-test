@@ -54,6 +54,11 @@ def process_age_step(message):
         msg = bot.send_message(chat_id, 'Age must be a number. How old are you?')
         bot.register_next_step_handler(msg, process_age_step)
         return
+    elif 1 <= age <= 130:
+        msg = bot.send_message(chat_id, 'Age must be between 1-130. How old are you?')
+        bot.register_next_step_handler(msg, process_age_step)
+        return
+
     UserModel.update(tg_id=chat_id, age=age)
     markup = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True)
     markup.add('Male', 'Female')
@@ -147,6 +152,11 @@ def process_get_new_age(message):
         age = message.text
         if not age.isdigit():
             msg = bot.send_message(chat_id, 'Age must be a number. How old are you?',
+                                   reply_markup=back_keyboard())
+            bot.register_next_step_handler(msg, process_get_new_age)
+            return
+        elif 1 <= age <= 130:
+            msg = bot.send_message(chat_id, 'Age must be between 1-130. How old are you?',
                                    reply_markup=back_keyboard())
             bot.register_next_step_handler(msg, process_get_new_age)
             return
