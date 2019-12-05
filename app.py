@@ -35,7 +35,7 @@ def start_command(message):
             return
         bot.send_message(chat_id, "You can change info in menu", reply_markup=main_menu_keyboard())
     else:
-        msg = bot.send_message(chat_id, "Hi! What is your name?")
+        msg = bot.send_message(chat_id, "Hi! What is your name?", reply_markup=remove_keyboard())
         bot.register_next_step_handler(msg, process_name_step)
 
 
@@ -60,7 +60,7 @@ def process_sex_step(message):
 
     UserModel.update(tg_id=chat_id, gender=gender)
     msg = bot.send_message(chat_id, 'How old are you?', reply_markup=remove_keyboard())
-    bot.register_next_step_handler(msg, process_sex_step)
+    bot.register_next_step_handler(msg, process_age_step)
 
 
 def process_age_step(message):
