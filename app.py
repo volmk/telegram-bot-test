@@ -21,7 +21,6 @@ def start_command(message):
     chat_id = message.chat.id
     if UserModel.is_user(chat_id):
         usr = UserModel.get_user(chat_id)
-        print(usr)
         if usr.get("user_name", None) is None:
             msg = bot.send_message(chat_id, "Hi! What is your name?")
             bot.register_next_step_handler(msg, process_name_step)
@@ -30,7 +29,7 @@ def start_command(message):
             msg = bot.send_message(chat_id, 'How old are you?')
             bot.register_next_step_handler(msg, process_age_step)
             return
-        if usr.get("gander", None) is None:
+        if usr.get("gender", None) is None:
             msg = bot.send_message(chat_id, 'What is your gender', reply_markup=gender_keyboard())
             bot.register_next_step_handler(msg, process_sex_step)
             return
