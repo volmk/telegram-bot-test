@@ -22,11 +22,11 @@ def start_command(message):
     if UserModel.is_user(chat_id):
         usr = UserModel.get_user(chat_id)
         if usr.get("user_name", None) is None:
-            msg = bot.send_message(chat_id, "Hi! What is your name?")
+            msg = bot.send_message(chat_id, "Hi! What is your name?", reply_markup=remove_keyboard())
             bot.register_next_step_handler(msg, process_name_step)
             return
         if usr.get("age", None) is None:
-            msg = bot.send_message(chat_id, 'How old are you?')
+            msg = bot.send_message(chat_id, 'How old are you?', reply_markup=remove_keyboard())
             bot.register_next_step_handler(msg, process_age_step)
             return
         if usr.get("gender", None) is None:
@@ -42,9 +42,25 @@ def start_command(message):
 def process_name_step(message):
     chat_id = message.chat.id
     name = message.text
-    msg = bot.send_message(chat_id, 'How old are you?')
+
     UserModel.insert_one(tg_id=chat_id, user_name=name)
-    bot.register_next_step_handler(msg, process_age_step)
+
+    msg = bot.send_message(chat_id, 'What is your gender', reply_markup=gender_keyboard())
+    bot.register_next_step_handler(msg, process_sex_step)
+
+
+def process_sex_step(message):
+    chat_id = message.chat.id
+    gender = message.text
+
+    if gender != u'Male' and gender != u'Female':
+        msg = bot.send_message(chat_id, 'Male or Female? What is your gender', reply_markup=gender_keyboard())
+        bot.register_next_step_handler(msg, process_sex_step)
+        return
+
+    UserModel.update(tg_id=chat_id, gender=gender)
+    msg = bot.send_message(chat_id, 'How old are you?', reply_markup=remove_keyboard())
+    bot.register_next_step_handler(msg, process_sex_step)
 
 
 def process_age_step(message):
@@ -60,21 +76,7 @@ def process_age_step(message):
         return
 
     UserModel.update(tg_id=chat_id, age=age)
-    markup = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True)
-    markup.add('Male', 'Female')
-    msg = bot.send_message(chat_id, 'What is your gender', reply_markup=markup)
-    bot.register_next_step_handler(msg, process_sex_step)
 
-
-def process_sex_step(message):
-    chat_id = message.chat.id
-    gender = message.text
-    if gender != u'Male' and gender != u'Female':
-        msg = bot.send_message(chat_id, 'Male or Female? What is your gender', reply_markup=gender_keyboard())
-        bot.register_next_step_handler(msg, process_sex_step)
-        return
-
-    UserModel.update(tg_id=chat_id, gender=gender)
     get_info(message)
 
 
@@ -104,6 +106,7 @@ def process_get_new_name(message):
         bot.send_message(chat_id, f'Great! New name: {name}', reply_markup=main_menu_keyboard())
     else:
         get_info(message)
+
 
 @bot.message_handler(regexp="Back to main menu")
 def get_new_gender(message):
@@ -135,7 +138,8 @@ def process_get_new_gender(message):
     if message.text != "Back to main menu":
         gender = message.text
         if gender != u'Male' and gender != u'Female':
-            msg = bot.send_message(chat_id, 'Male or Female? What is your gender', reply_markup=gender_keyboard())
+            msg = bot.send_message(chat_id, 'Male or Female? What is your gender',
+                                   reply_markup=new_gender_back_keyboard())
             bot.register_next_step_handler(msg, process_get_new_gender)
             return
 
