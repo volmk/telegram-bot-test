@@ -17,5 +17,5 @@ requests==2.22.0
 six==1.13.0
 SQLAlchemy==1.3.11
 umongo==2.1.1
-urllib3==1.25.7
+urllib3==1.25.8
 Werkzeug==0.16.0
